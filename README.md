@@ -20,14 +20,6 @@ EXTRACT (YEAR FROM transaction_date) AS year,
  
 ![image](https://github.com/user-attachments/assets/920232f5-bce4-495f-b3ba-5a981ce836a9)
 
-
-
-
-
-
-
-
-
 SELECT
 	
  SUM (transaction_qty * unit_price) AS total_sales
