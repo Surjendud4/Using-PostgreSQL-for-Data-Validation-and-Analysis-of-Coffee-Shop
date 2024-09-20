@@ -773,4 +773,108 @@ EXTRACT(DAY FROM transaction_date);
 
 ![image](https://github.com/user-attachments/assets/ee645346-624b-4c9b-b137-c6a534199a01) ![image](https://github.com/user-attachments/assets/4a64e109-bb32-4a26-8dd1-52b2460ff105)
 
+# COMPARING DAILY SALES WITH AVERAGE SALES – IF GREATER THAN “ABOVE AVERAGE” and LESSER THAN “BELOW AVERAGE”
+
+SELECT 
+
+day_of_month,
+
+CASE 
+
+WHEN total_sales > avg_sales THEN 'Above Average'
+
+WHEN total_sales < avg_sales THEN 'Below Average'
+
+ELSE 'Average'
+
+END AS sales_status,
+
+total_sales
+
+FROM (
+
+SELECT 
+
+EXTRACT(DAY FROM transaction_date) AS day_of_month,
+
+SUM(unit_price * transaction_qty) AS total_sales,
+
+AVG(SUM(unit_price * transaction_qty)) OVER () AS avg_sales
+
+FROM 
+
+coffee_shop_transactions
+
+WHERE
+
+EXTRACT(MONTH FROM transaction_date) = 5  -- Filter for May
+
+GROUP BY 
+
+EXTRACT(DAY FROM transaction_date)
+)
+AS sales_data
+
+ORDER BY 
+
+day_of_month;
+
+![image](https://github.com/user-attachments/assets/c7d342fd-ccb1-4275-a4e0-aa29feaf5294) ![image](https://github.com/user-attachments/assets/9ead5482-6fc8-495d-be8e-a1554a5329e2)
+
+# SALES BY STORE LOCATION
+
+WITH monthly_sales AS (
+
+SELECT 
+
+store_location,
+
+EXTRACT(YEAR FROM transaction_date) AS year,
+
+EXTRACT(MONTH FROM transaction_date) AS month,
+
+SUM(unit_price * transaction_qty) AS total_sales
+
+FROM 
+
+coffee_shop_transactions
+
+GROUP BY 
+
+store_location,
+
+EXTRACT(YEAR FROM transaction_date),
+
+EXTRACT(MONTH FROM transaction_date)
+)
+
+SELECT
+
+store_location,
+
+year,
+
+month,
+
+total_sales,
+
+LAG(total_sales) OVER (PARTITION BY store_location ORDER BY year, month) AS previous_month_sales,
+
+total_sales - LAG(total_sales) OVER (PARTITION BY store_location ORDER BY year, month) AS sales_difference,
+
+ROUND((total_sales - LAG(total_sales) OVER (PARTITION BY store_location ORDER BY year, month)) / 
+
+NULLIF(LAG(total_sales) OVER (PARTITION BY store_location ORDER BY year, month), 0) * 100, 2) AS mom_percentage_change
+
+FROM 
+
+monthly_sales
+
+ORDER BY 
+
+store_location, year, month;
+
+
+
+![image](https://github.com/user-attachments/assets/8f0976fe-5cdc-4b53-8c3a-40b8832bbf3f) ![image](https://github.com/user-attachments/assets/d1621f3f-b31f-48cc-86f8-90aad5197f69)
 
