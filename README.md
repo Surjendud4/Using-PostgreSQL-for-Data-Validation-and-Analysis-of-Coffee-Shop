@@ -17,7 +17,10 @@ EXTRACT (YEAR FROM transaction_date) AS year,
  EXTRACT (MONTH FROM transaction_date)
  
  ORDER BY year, month;
+ 
 ![image](https://github.com/user-attachments/assets/920232f5-bce4-495f-b3ba-5a981ce836a9)
+
+
 
 
 SELECT
