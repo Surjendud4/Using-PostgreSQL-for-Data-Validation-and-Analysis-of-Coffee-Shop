@@ -874,7 +874,264 @@ ORDER BY
 
 store_location, year, month;
 
-
-
 ![image](https://github.com/user-attachments/assets/8f0976fe-5cdc-4b53-8c3a-40b8832bbf3f) ![image](https://github.com/user-attachments/assets/d1621f3f-b31f-48cc-86f8-90aad5197f69)
+
+# SALES BY STORE LOCATION BASED ON SELECTED MONTH
+
+SELECT 
+
+store_location,
+
+SUM(unit_price * transaction_qty) as Total_Sales
+
+FROM coffee_shop_transactions
+
+WHERE
+
+EXTRACT (MONTH FROM transaction_date) = 5
+
+GROUP BY
+
+store_location
+
+ORDER BY
+
+SUM(unit_price * transaction_qty) DESC
+
+
+![image](https://github.com/user-attachments/assets/036ebbf1-250a-4647-9692-6731d065c3cf)
+
+# SALES BY PRODUCT CATEGORY
+
+SELECT 
+
+product_category,
+
+ROUND(SUM(unit_price * transaction_qty),1) as Total_Sales
+
+FROM coffee_shop_transactions
+
+WHERE
+
+EXTRACT (MONTH FROM transaction_date) = 5
+
+GROUP BY product_category
+
+ORDER BY SUM(unit_price * transaction_qty) DESC;
+
+
+![image](https://github.com/user-attachments/assets/45d0deb7-5c9b-4c92-a0d5-23efd453db4e)
+
+#SALES BY PRODUCTS (TOP 10)
+
+SELECT 
+
+product_type,
+
+ROUND(SUM(unit_price * transaction_qty),1) as Total_Sales
+
+FROM coffee_shop_transactions
+
+WHERE
+
+EXTRACT (MONTH FROM transaction_date) = 5
+
+GROUP BY product_type
+
+ORDER BY SUM(unit_price * transaction_qty) DESC	
+
+LIMIT 10;
+
+
+![image](https://github.com/user-attachments/assets/1d44f226-800b-4a2b-9bc2-560e7795ec05)
+
+# TO GET SALES FROM MONDAY TO SUNDAY FOR MONTH (Example - May)
+
+SELECT 
+
+CASE 
+
+WHEN DAYOFWEEK(transaction_date) = 2 THEN 'Monday'
+
+WHEN DAYOFWEEK(transaction_date) = 3 THEN 'Tuesday'
+
+WHEN DAYOFWEEK(transaction_date) = 4 THEN 'Wednesday'
+
+WHEN DAYOFWEEK(transaction_date) = 5 THEN 'Thursday'
+
+WHEN DAYOFWEEK(transaction_date) = 6 THEN 'Friday'
+
+
+WHEN DAYOFWEEK(transaction_date) = 7 THEN 'Saturday'
+
+ELSE 'Sunday'
+
+END AS Day_of_Week,
+
+ROUND(SUM(unit_price * transaction_qty)) AS Total_Sales
+
+FROM 
+
+coffee_shop_sales
+
+WHERE
+
+MONTH(transaction_date) = 5 -- Filter for May (month number 5)
+
+GROUP BY 
+
+CASE 
+
+WHEN DAYOFWEEK(transaction_date) = 2 THEN 'Monday'
+
+ WHEN DAYOFWEEK(transaction_date) = 3 THEN 'Tuesday'
+
+ WHEN DAYOFWEEK(transaction_date) = 4 THEN 'Wednesday'
+
+WHEN DAYOFWEEK(transaction_date) = 5 THEN 'Thursday'
+
+WHEN DAYOFWEEK(transaction_date) = 6 THEN 'Friday'
+
+WHEN DAYOFWEEK(transaction_date) = 7 THEN 'Saturday'
+
+ELSE 'Sunday'
+
+END;
+
+
+![image](https://github.com/user-attachments/assets/46aa1385-dea8-4904-b4d8-47d6921164ce)
+
+# TO GET SALES FOR ALL HOURS FOR MONTH OF MAY
+
+SELECT 
+
+HOUR(transaction_time) AS Hour_of_Day,
+
+ROUND(SUM(unit_price * transaction_qty)) AS Total_Sales
+
+FROM 
+
+coffee_shop_sales
+
+WHERE
+
+MONTH(transaction_date) = 5 -- Filter for May (month number 5)
+
+GROUP BY 
+
+HOUR(transaction_time)
+
+ORDER BY 
+
+HOUR(transaction_time);
+
+
+![image](https://github.com/user-attachments/assets/e6c96708-0cbc-40e9-b8cc-4c6b7e2ae4ce)
+
+
+# Top Product Categories: Identify the top-selling product categories each month to understand customer preferences and guide inventory decisions
+
+SELECT 
+
+product_category, 
+
+EXTRACT(MONTH FROM transaction_date) AS month, 
+
+SUM(unit_price * transaction_qty) AS total_sales
+
+FROM 
+
+coffee_shop_transactions
+
+GROUP BY 
+
+product_category, 
+
+EXTRACT(MONTH FROM transaction_date)
+
+ORDER BY 
+
+total_sales DESC;
+
+
+![image](https://github.com/user-attachments/assets/46059c77-c414-4235-9402-bdb2eabc7425) ![image](https://github.com/user-attachments/assets/44b0ba01-4578-464f-bdd9-32137310f2b6) ![image](https://github.com/user-attachments/assets/5dc07e1a-1c54-4b6b-a30c-f872477a5ae4)
+
+WITH date_range AS (
+
+SELECT
+
+MIN(transaction_date) AS min_date,
+
+MAX(transaction_date) AS max_date
+
+FROM
+
+coffee_shop_transactions
+),
+
+working_days AS (
+
+SELECT
+
+generate_series(min_date, max_date, '1 day'::interval) AS day
+
+FROM
+
+date_range
+)
+
+SELECT
+
+DATE_TRUNC('month', day) AS month,
+
+COUNT(*) AS working_days
+
+FROM
+
+working_days
+
+WHERE
+
+EXTRACT(DOW FROM day) BETWEEN 1 AND 5  -- Filters for weekdays only (Monday to Friday)
+
+GROUP BY
+
+DATE_TRUNC('month', day)
+
+ORDER BY
+
+month;
+
+![image](https://github.com/user-attachments/assets/592670d4-d290-46d4-ad85-7382ed15e527)
+
+SELECT 
+
+product_category, 
+
+EXTRACT(MONTH FROM transaction_date) AS month, 
+
+SUM(unit_price * transaction_qty) AS total_sales
+
+FROM 
+
+coffee_shop_transactions
+
+GROUP BY 
+
+product_category, 
+
+EXTRACT(MONTH FROM transaction_date)
+
+ORDER BY 
+
+product_category, month;
+
+
+SELECT COUNT(*) AS weekdays
+
+FROM generate_series('2023-05-01'::date, '2023-05-31'::date, '1 day') AS day_series
+
+WHERE EXTRACT(DOW FROM day_series) BETWEEN 1 AND 5;
+
+![image](https://github.com/user-attachments/assets/cc3090eb-73c2-4fdc-822c-3e28648f14fd)
 
