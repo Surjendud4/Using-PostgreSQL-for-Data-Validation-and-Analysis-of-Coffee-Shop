@@ -604,5 +604,102 @@ day_type;
 
 ![image](https://github.com/user-attachments/assets/c7173021-bafc-4f85-99c8-613c30142ae4)
 
+# TOTAL SALES BY AVG
 
+WITH sales_data AS (
+
+SELECT
+
+transaction_date,
+
+EXTRACT(DOW FROM transaction_date) AS day_of_week,
+
+CASE 
+
+WHEN EXTRACT(DOW FROM transaction_date) IN (0, 6) THEN 'Weekend'
+
+ELSE 'Weekday'
+
+END AS day_type,
+
+SUM(unit_price * transaction_qty) AS total_sales,
+
+COUNT(transaction_id) AS total_orders,
+
+SUM(transaction_qty) AS total_quantity
+
+FROM 
+
+coffee_shop_transactions
+
+GROUP BY
+
+transaction_date
+)
+
+SELECT
+
+day_type,
+
+AVG(total_sales) AS avg_sales,
+
+AVG(total_orders) AS avg_orders,
+
+AVG(total_quantity) AS avg_quantity
+
+FROM
+
+sales_data
+
+GROUP BY
+
+day_type
+
+ORDER BY
+
+day_type;
+
+
+![image](https://github.com/user-attachments/assets/f315251c-5915-45db-ad2f-c2a9a3aa41cc)
+
+# SALES BY WEEKDAY / WEEKEND
+
+SELECT
+
+EXTRACT(MONTH FROM transaction_date) AS month,
+
+CASE 
+
+WHEN EXTRACT(DOW FROM transaction_date) IN (0, 6) THEN 'weekends'
+
+ELSE 'weekdays'
+
+END AS day_type,
+
+SUM(unit_price * transaction_qty) AS total_sales
+
+FROM 
+
+coffee_shop_transactions
+
+GROUP BY
+
+EXTRACT(MONTH FROM transaction_date),
+
+CASE 
+
+WHEN EXTRACT(DOW FROM transaction_date) IN (0, 6) THEN 'weekends'
+
+ELSE 'weekdays'
+
+END
+
+ORDER BY
+
+month,
+
+day_type;
+
+
+![image](https://github.com/user-attachments/assets/c1703467-ce15-45e8-a7fc-6e407d23ebf9)
 
