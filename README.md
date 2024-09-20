@@ -28,3 +28,58 @@ SELECT
  
 ![image](https://github.com/user-attachments/assets/cb94d2d9-067c-4d7a-a15a-0ded4aaaf629)
 
+SELECT
+	SUM (transaction_qty * unit_price) AS total_sales
+	FROM coffee_shop_transactions
+	WHERE
+	EXTRACT (MONTH FROM transaction_date) = 5; -- may month
+
+![image](https://github.com/user-attachments/assets/055dd7bf-36de-46d0-afa4-17066bdec8f5)
+
+# Current Determine the MoM Increase or Decrease  in Sales
+
+WITH monthly_sales AS (
+	SELECT
+
+EXTRACT (YEAR FROM transaction_date) AS year,
+
+EXTRACT (MONTH FROM transaction_date) AS month,
+
+ROUND (SUM (transaction_qty * unit_price)) AS total_sales
+
+FROM coffee_shop_transactions
+
+GROUP BY
+
+EXTRACT (YEAR FROM transaction_date),
+
+EXTRACT (MONTH FROM transaction_date)
+)
+
+SELECT
+
+year,
+
+month,
+
+total_sales,
+
+LAG(total_sales) OVER (ORDER  BY year,month) AS previous_month_sales,
+
+(total_sales - LAG(total_sales) OVER ( ORDER BY year, month)) AS sales_difference,
+
+ROUND((total_sales - LAG(total_sales) OVER (ORDER BY year, month)) /
+
+NULLIF(LAG(total_sales) OVER (ORDER BY year, month), 0) * 100, 2) AS mom_percentage_change
+
+FROM 
+
+monthly_sales
+
+ORDER BY 
+
+year, month;
+
+![image](https://github.com/user-attachments/assets/e3e22a15-7499-47f7-aca2-1dd46852166a)
+
+
