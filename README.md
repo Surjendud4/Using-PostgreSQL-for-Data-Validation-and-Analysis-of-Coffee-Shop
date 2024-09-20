@@ -82,4 +82,10 @@ year, month;
 
 ![image](https://github.com/user-attachments/assets/e3e22a15-7499-47f7-aca2-1dd46852166a)
 
-
+Explanation:
+1.	WITH monthly_sales AS (...): This common table expression (CTE) calculates the total sales for each month.
+2.	EXTRACT(YEAR FROM transaction_date) AS year, EXTRACT(MONTH FROM transaction_date) AS month: Extracts the year and month from the transaction date.
+3.	SUM(transaction_qty * unit_price) AS total_sales: Sums the total sales for each month.
+4.	LAG(total_sales) OVER (ORDER BY year, month) AS previous_month_sales: The LAG() function gets the total sales of the previous month.
+5.	(total_sales - LAG(total_sales) OVER (ORDER BY year, month)) AS sales_difference: Calculates the difference in sales between the current month and the previous month.
+6.	ROUND((total_sales - LAG(total_sales) OVER (ORDER BY year, month)) / NULLIF(LAG(total_sales) OVER (ORDER BY year, month), 0) * 100, 2) AS mom_percentage_change: Calculates the percentage change in sales from the previous month and rounds it to two decimal places. The NULLIF() function prevents division by zero.
