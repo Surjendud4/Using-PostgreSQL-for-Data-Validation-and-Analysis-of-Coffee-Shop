@@ -164,3 +164,19 @@ EXTRACT (MONTH FROM transaction_date)
 ORDER BY year, month;
 
 ![image](https://github.com/user-attachments/assets/c1a79aff-8902-4d8b-8410-b50e2bd9b55e)
+
+SELECT COUNT
+
+(transaction_id) AS total_orders FROM coffee_shop_transactions;
+
+![image](https://github.com/user-attachments/assets/882feea7-cdf2-46b1-b0f6-b90bed149431)
+
+SELECT COUNT (transaction_id) AS total_orders FROM coffee_shop_transactions
+
+WHERE EXTRACT ( MONTH FROM transaction_date) = 5; -- may month
+
+![image](https://github.com/user-attachments/assets/65bbf614-e976-4d43-8f84-c62c58085b37)
+
+
+
+
