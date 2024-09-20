@@ -230,3 +230,379 @@ ORDER BY
 year, month;
 ![image](https://github.com/user-attachments/assets/b9d96b38-ff00-4643-84f0-4f4031aa81e2)
 
+# Current Month vs Previous Month
+
+SELECT 
+
+EXTRACT(MONTH FROM transaction_date) AS month,
+
+ROUND(COUNT(transaction_id)) AS total_orders,
+
+ROUND((COUNT(transaction_id) - LAG(COUNT(transaction_id), 1) 
+
+OVER (ORDER BY EXTRACT(MONTH FROM transaction_date)))::numeric / 
+
+LAG(COUNT(transaction_id), 1) 
+
+OVER (ORDER BY EXTRACT(MONTH FROM transaction_date)) * 100, 2
+    )
+    
+AS mom_increase_percentage
+
+FROM 
+
+coffee_shop_transactions
+
+WHERE
+
+EXTRACT(MONTH FROM transaction_date) IN (4, 5)
+
+AND EXTRACT(YEAR FROM transaction_date) = 2023
+
+GROUP BY 
+
+EXTRACT(MONTH FROM transaction_date)
+
+ORDER BY 
+
+EXTRACT(MONTH FROM transaction_date);
+
+![image](https://github.com/user-attachments/assets/a0168dbc-3411-47be-9755-96c9e1b4b5e5)
+
+WITH monthly_orders AS (
+
+SELECT
+
+EXTRACT(YEAR FROM transaction_date) AS year,
+
+EXTRACT(MONTH FROM transaction_date) AS month,
+
+COUNT(transaction_id) AS total_orders
+
+FROM 
+
+coffee_shop_transactions
+
+WHERE
+
+EXTRACT(YEAR FROM transaction_date) = 2023
+
+AND EXTRACT(MONTH FROM transaction_date) IN (4, 5)
+
+GROUP BY
+
+EXTRACT(YEAR FROM transaction_date),
+
+EXTRACT(MONTH FROM transaction_date)
+)
+
+SELECT
+
+year,
+
+month,
+
+total_orders,
+
+LAG(total_orders) OVER (ORDER BY year, month) AS previous_month_orders,
+
+(total_orders - LAG(total_orders) OVER (ORDER BY year, month)) AS order_difference,
+
+ROUND(
+
+((total_orders - LAG(total_orders) OVER (ORDER BY year, month))::numeric / 
+
+NULLIF(LAG(total_orders) OVER (ORDER BY year, month), 0)) * 100, 4
+    )
+
+AS mom_increase_percentage
+
+FROM 
+
+monthly_orders
+
+ORDER BY 
+
+year, month;
+
+![image](https://github.com/user-attachments/assets/f6cb9737-72ab-4a4f-b370-bb42c646574e)
+
+# TOTAL QUANTITY SOLD
+
+SELECT
+
+EXTRACT (YEAR FROM transaction_date) AS year,
+
+EXTRACT (MONTH FROM transaction_date) AS month,
+
+SUM (transaction_qty) AS total_qty_sold
+
+FROM coffee_shop_transactions
+
+GROUP BY
+
+EXTRACT (YEAR FROM transaction_date),
+
+EXTRACT (MONTH FROM transaction_date)
+
+ORDER BY year, month;
+
+![image](https://github.com/user-attachments/assets/5ae94120-dad7-4993-8e11-e48bd6de3670)
+
+# TOTAL QUANTITY SOLD KPI - MOM DIFFERENCE AND MOM GROWTH
+
+WITH monthly_qty_sold AS (
+
+SELECT
+
+EXTRACT(YEAR FROM transaction_date) AS year,
+
+EXTRACT(MONTH FROM transaction_date) AS month,
+
+ROUND(SUM(transaction_qty)) AS total_qty_sold
+
+FROM coffee_shop_transactions
+
+GROUP BY
+
+EXTRACT(YEAR FROM transaction_date),
+
+EXTRACT(MONTH FROM transaction_date)
+)
+
+SELECT
+
+year,
+
+month,
+
+total_qty_sold,
+
+LAG(total_qty_sold) OVER (ORDER BY year, month) AS previous_month_qty,
+
+(total_qty_sold - LAG(total_qty_sold) OVER (ORDER BY year, month)) AS qty_difference,
+
+ROUND(
+
+((total_qty_sold::numeric - LAG(total_qty_sold) OVER (ORDER BY year, month)::numeric) /
+
+NULLIF(LAG(total_qty_sold) OVER (ORDER BY year, month), 0)::numeric) * 100, 2
+    )
+
+AS mom_percentage_change
+
+FROM 
+
+monthly_qty_sold
+
+ORDER BY 
+
+year, month;
+
+![image](https://github.com/user-attachments/assets/e52a0c7b-e283-416a-b5dd-cd993756e9b7)
+
+# Current Month vs Previous Month
+
+WITH monthly_qty_sold AS (
+
+SELECT
+
+EXTRACT(MONTH FROM transaction_date) AS month,
+
+ROUND(SUM(transaction_qty)) AS total_qty_sold
+
+FROM 
+
+coffee_shop_transactions
+
+WHERE
+
+EXTRACT(MONTH FROM transaction_date) IN (4, 5)
+
+GROUP BY
+
+EXTRACT(MONTH FROM transaction_date)
+)
+
+SELECT
+
+month,
+
+total_qty_sold,
+
+ROUND(
+
+((total_qty_sold::numeric - LAG(total_qty_sold) OVER (ORDER BY month)::numeric) /
+
+NULLIF(LAG(total_qty_sold) OVER (ORDER BY month), 0)::numeric) * 100, 2
+    )
+
+AS mom_percentage_change
+
+FROM 
+
+monthly_qty_sold
+
+ORDER BY 
+
+month;
+
+
+![image](https://github.com/user-attachments/assets/14b69b60-920e-496b-9278-e628273e9b46)
+
+WITH monthly_qty_sold AS (
+
+SELECT
+
+EXTRACT(YEAR FROM transaction_date) AS year,
+
+EXTRACT(MONTH FROM transaction_date) AS month,
+
+ROUND(SUM(transaction_qty)) AS total_qty_sold
+
+FROM 
+
+coffee_shop_transactions
+
+WHERE
+
+EXTRACT(YEAR FROM transaction_date) = 2023
+
+AND EXTRACT(MONTH FROM transaction_date) IN (4, 5)
+
+GROUP BY
+
+EXTRACT(YEAR FROM transaction_date),
+
+EXTRACT(MONTH FROM transaction_date)
+)
+
+SELECT
+
+year,
+
+month,
+
+total_qty_sold,
+
+LAG(total_qty_sold) OVER (ORDER BY year, month) AS previous_month_qty,
+
+(total_qty_sold - LAG(total_qty_sold) OVER (ORDER BY year, month)) AS qty_difference,
+
+ROUND(
+
+((total_qty_sold::numeric - LAG(total_qty_sold) OVER (ORDER BY year, month)::numeric) /
+
+NULLIF(LAG(total_qty_sold) OVER (ORDER BY year, month), 0)::numeric) * 100, 2
+    )
+    
+AS mom_percentage_change
+
+FROM 
+
+monthly_qty_sold
+
+ORDER BY 
+
+year, month;
+
+![image](https://github.com/user-attachments/assets/a7c4a465-596a-466f-a06d-3fc11f8b7fba)
+
+# CALENDAR TABLE – DAILY SALES, QUANTITY and TOTAL ORDERS
+
+SELECT
+
+EXTRACT (YEAR FROM transaction_date) AS year,
+
+EXTRACT (MONTH FROM transaction_date) AS month,
+
+EXTRACT (DAY FROM transaction_date) AS day,
+
+SUM (unit_price * transaction_qty) AS total_Sale,
+
+COUNT (transaction_qty) AS total_orders,
+
+SUM (transaction_qty) AS total_qunatity
+
+FROM
+
+coffee_shop_transactions
+
+WHERE
+
+EXTRACT (YEAR FROM transaction_date) = 2023
+
+GROUP BY
+
+EXTRACT(YEAR FROM transaction_date),
+
+EXTRACT(MONTH FROM transaction_date),
+
+EXTRACT(DAY FROM transaction_date)
+
+ORDER BY
+
+year, month, day;
+
+![image](https://github.com/user-attachments/assets/d09eb866-65cc-4bb2-9c62-5c63b9c192e3)
+
+# SALES TREND OVER PERIOD
+
+WITH sales_data AS (
+
+SELECT
+
+transaction_date,
+
+EXTRACT(DOW FROM transaction_date) AS day_of_week,
+
+CASE 
+        
+WHEN EXTRACT(DOW FROM transaction_date) IN (0, 6) THEN 'Weekend'
+
+ELSE 'Weekday'
+
+END AS day_type,
+
+SUM(unit_price * transaction_qty) AS total_sales,
+
+COUNT(transaction_id) AS total_orders,
+
+SUM(transaction_qty) AS total_quantity
+
+FROM 
+
+coffee_shop_transactions
+
+GROUP BY
+
+transaction_date
+)
+
+SELECT
+
+day_type,
+
+SUM(total_sales) AS total_sales,
+
+SUM(total_orders) AS total_orders,
+
+SUM(total_quantity) AS total_quantity
+
+FROM
+
+sales_data
+
+GROUP BY
+
+day_type
+
+ORDER BY
+
+day_type;
+
+
+![image](https://github.com/user-attachments/assets/c7173021-bafc-4f85-99c8-613c30142ae4)
+
+
+
