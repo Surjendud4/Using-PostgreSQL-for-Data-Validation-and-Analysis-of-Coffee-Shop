@@ -89,3 +89,44 @@ Explanation:
 4.	LAG(total_sales) OVER (ORDER BY year, month) AS previous_month_sales: The LAG() function gets the total sales of the previous month.
 5.	(total_sales - LAG(total_sales) OVER (ORDER BY year, month)) AS sales_difference: Calculates the difference in sales between the current month and the previous month.
 6.	ROUND((total_sales - LAG(total_sales) OVER (ORDER BY year, month)) / NULLIF(LAG(total_sales) OVER (ORDER BY year, month), 0) * 100, 2) AS mom_percentage_change: Calculates the percentage change in sales from the previous month and rounds it to two decimal places. The NULLIF() function prevents division by zero.
+
+
+# Current Month vs Previous Month
+
+SELECT 
+
+EXTRACT(MONTH FROM transaction_date) AS month,
+
+ROUND(SUM(unit_price * transaction_qty)) AS total_sales,
+
+ROUND((SUM(unit_price * transaction_qty) - LAG(SUM(unit_price * transaction_qty), 1) 
+
+OVER (ORDER BY EXTRACT(MONTH FROM transaction_date))) / 
+
+LAG(SUM(unit_price * transaction_qty), 1) 
+
+OVER (ORDER BY EXTRACT(MONTH FROM transaction_date)) * 100, 2
+    )
+
+AS mom_increase_percentage
+
+FROM 
+
+coffee_shop_transactions
+
+WHERE
+
+EXTRACT(MONTH FROM transaction_date) IN (4, 5)
+
+AND EXTRACT(YEAR FROM transaction_date) = 2023
+
+GROUP BY 
+
+EXTRACT(MONTH FROM transaction_date)
+
+ORDER BY 
+
+EXTRACT(MONTH FROM transaction_date);
+
+![image](https://github.com/user-attachments/assets/bb065cbc-5e96-4319-aaba-65e627fedfb8)
+
