@@ -2,8 +2,9 @@
 ![image](https://github.com/user-attachments/assets/920232f5-bce4-495f-b3ba-5a981ce836a9)
 
 code:
+
 SELECT
-	EXTRACT (YEAR FROM transaction_date) AS year,
+EXTRACT (YEAR FROM transaction_date) AS year,
  
  EXTRACT (MONTH FROM transaction_date) AS month,
  
