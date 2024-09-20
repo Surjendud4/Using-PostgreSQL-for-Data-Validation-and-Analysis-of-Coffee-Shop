@@ -1126,6 +1126,21 @@ ORDER BY
 
 product_category, month;
 
+SELECT product_details, ROUND (SUM(transaction_qty * unit_price)) AS total_sales
+
+FROM coffee_shop_transactions
+
+WHERE DATE_PART('month', transaction_date) = 5
+
+AND DATE_PART('year', transaction_date) = 2023
+
+GROUP BY product_details
+
+ORDER BY total_sales DESC
+
+LIMIT 1;
+
+![image](https://github.com/user-attachments/assets/f74bf234-f374-462a-b8e0-5dba296451d2)
 
 SELECT COUNT(*) AS weekdays
 
@@ -1135,3 +1150,10 @@ WHERE EXTRACT(DOW FROM day_series) BETWEEN 1 AND 5;
 
 ![image](https://github.com/user-attachments/assets/cc3090eb-73c2-4fdc-822c-3e28648f14fd)
 
+SELECT COUNT(*) AS weekends
+
+FROM generate_series('2023-05-01'::date, '2023-05-31'::date, '1 day') AS day_series
+
+WHERE EXTRACT(DOW FROM day_series) IN (0, 6);
+
+![image](https://github.com/user-attachments/assets/f1fb3bba-4af5-41f8-863a-02ca329a95ed)
