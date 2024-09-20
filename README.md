@@ -132,3 +132,13 @@ EXTRACT(MONTH FROM transaction_date);
 
 ![image](https://github.com/user-attachments/assets/bb065cbc-5e96-4319-aaba-65e627fedfb8)
 
+Explanation:
+
+1.	EXTRACT(MONTH FROM transaction_date) AS month: Extracts the month from the transaction date.
+2.	ROUND(SUM(unit_price * transaction_qty)) AS total_sales: Calculates the total sales for each month and rounds it to the nearest whole number.
+3.	ROUND( (SUM(unit_price * transaction_qty) - LAG(SUM(unit_price * transaction_qty), 1) OVER (ORDER BY EXTRACT(MONTH FROM transaction_date))) / LAG(SUM(unit_price * transaction_qty), 1) OVER (ORDER BY EXTRACT(MONTH FROM transaction_date)) * 100, 2 ) AS mom_increase_percentage:
+i)	Uses the LAG function to get the total sales of the previous month.
+ii)	Calculates the month-over-month percentage change and rounds it to two decimal places.
+4.	WHERE EXTRACT(MONTH FROM transaction_date) IN (4, 5) AND EXTRACT(YEAR FROM transaction_date) = 2023: Filters the data to include only transactions from April and May 2023.
+5.	GROUP BY EXTRACT(MONTH FROM transaction_date): Groups the data by month.
+6.	ORDER BY EXTRACT(MONTH FROM transaction_date): Orders the results by month.
