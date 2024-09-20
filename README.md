@@ -4,10 +4,18 @@
 code:
 SELECT
 	EXTRACT (YEAR FROM transaction_date) AS year,
+ 
 	EXTRACT (MONTH FROM transaction_date) AS month,
+ 
 	ROUND (SUM(transaction_qty * unit_price)) AS total_sales
+ 
 	FROM coffee_shop_transactions
+ 
 	GROUP BY
+ 
 	EXTRACT (YEAR FROM transaction_date),
+ 
 	EXTRACT (MONTH FROM transaction_date)
+ 
 	ORDER BY year, month;
+ 
