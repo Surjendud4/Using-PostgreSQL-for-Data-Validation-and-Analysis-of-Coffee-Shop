@@ -177,6 +177,56 @@ WHERE EXTRACT ( MONTH FROM transaction_date) = 5; -- may month
 
 ![image](https://github.com/user-attachments/assets/65bbf614-e976-4d43-8f84-c62c58085b37)
 
+# TOTAL ORDERS KPI - MOM DIFFERENCE AND MOM GROWTH
 
+WITH monthly_orders AS (
+    
+SELECT
 
+EXTRACT(YEAR FROM transaction_date) AS year,
+
+EXTRACT(MONTH FROM transaction_date) AS month,
+
+COUNT(transaction_id) AS total_orders
+
+FROM 
+
+coffee_shop_transactions
+
+GROUP BY
+
+EXTRACT(YEAR FROM transaction_date),
+
+EXTRACT(MONTH FROM transaction_date)
+)
+
+SELECT
+
+year,
+
+month,
+
+total_orders,
+
+LAG(total_orders) OVER (ORDER BY year, month) AS previous_month_orders,
+
+(total_orders - LAG(total_orders) OVER (ORDER BY year, month)) AS order_difference,
+
+ROUND(
+
+(total_orders - LAG(total_orders) OVER (ORDER BY year, month))::numeric /
+
+NULLIF(LAG(total_orders) OVER (ORDER BY year, month), 0) * 100, 2
+    )
+
+AS mom_percentage_change
+
+FROM 
+
+monthly_orders
+
+ORDER BY 
+
+year, month;
+![image](https://github.com/user-attachments/assets/b9d96b38-ff00-4643-84f0-4f4031aa81e2)
 
