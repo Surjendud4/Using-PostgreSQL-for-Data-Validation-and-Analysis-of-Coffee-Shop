@@ -23,10 +23,16 @@ EXTRACT (YEAR FROM transaction_date) AS year,
 
 
 
+
+
+
+
+
 SELECT
 	
  SUM (transaction_qty * unit_price) AS total_sales
  
-	FROM coffee_shop_transactions
+ FROM coffee_shop_transactions
+ 
 ![image](https://github.com/user-attachments/assets/cb94d2d9-067c-4d7a-a15a-0ded4aaaf629)
 
