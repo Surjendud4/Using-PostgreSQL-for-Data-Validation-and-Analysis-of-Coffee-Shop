@@ -4,6 +4,7 @@
 code:
 
 SELECT
+
 EXTRACT (YEAR FROM transaction_date) AS year,
  
  EXTRACT (MONTH FROM transaction_date) AS month,
