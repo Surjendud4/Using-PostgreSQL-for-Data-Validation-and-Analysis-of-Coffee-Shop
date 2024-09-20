@@ -38,8 +38,10 @@ SELECT
 
 # Current Determine the MoM Increase or Decrease  in Sales
 
-WITH monthly_sales AS (
-	SELECT
+WITH monthly_sales AS
+(
+
+SELECT
 
 EXTRACT (YEAR FROM transaction_date) AS year,
 
