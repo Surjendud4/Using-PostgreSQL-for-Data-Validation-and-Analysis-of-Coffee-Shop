@@ -703,3 +703,74 @@ day_type;
 
 ![image](https://github.com/user-attachments/assets/c1703467-ce15-45e8-a7fc-6e407d23ebf9)
 
+WITH total_sales_per_day AS (
+
+SELECT 
+
+EXTRACT(MONTH FROM transaction_date) AS month,
+
+SUM(unit_price * transaction_qty) AS total_sales
+
+FROM 
+
+coffee_shop_transactions
+
+GROUP BY 
+
+EXTRACT(MONTH FROM transaction_date),
+
+transaction_date
+)
+
+SELECT
+
+month,
+
+AVG(total_sales) AS avg_sales
+
+FROM 
+
+total_sales_per_day
+
+GROUP BY 
+
+month
+
+ORDER BY 
+
+month;
+
+![image](https://github.com/user-attachments/assets/21415d5a-16d6-4b9c-868e-12d38b005ff2)
+
+CTE Calculation: Aggregates sales per day in a month.
+Main Query: Computes the average of these daily total sales for each month.
+Purpose: This query calculates the average sales per day in a month and then averages those daily totals to get the monthly average.
+
+# DAILY SALES FOR MONTH SELECTED
+
+SELECT 
+
+EXTRACT(DAY FROM transaction_date) AS day_of_month,
+
+ROUND(SUM(unit_price * transaction_qty), 1) AS total_sales
+
+FROM 
+
+coffee_shop_transactions
+
+WHERE
+
+EXTRACT(MONTH FROM transaction_date) = 5  -- Filter for May
+
+GROUP BY 
+
+EXTRACT(DAY FROM transaction_date)
+
+ORDER BY 
+
+EXTRACT(DAY FROM transaction_date);
+
+
+![image](https://github.com/user-attachments/assets/ee645346-624b-4c9b-b137-c6a534199a01) ![image](https://github.com/user-attachments/assets/4a64e109-bb32-4a26-8dd1-52b2460ff105)
+
+
