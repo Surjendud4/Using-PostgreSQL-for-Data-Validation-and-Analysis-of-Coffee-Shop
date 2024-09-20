@@ -142,3 +142,25 @@ ii)	Calculates the month-over-month percentage change and rounds it to two decim
 4.	WHERE EXTRACT(MONTH FROM transaction_date) IN (4, 5) AND EXTRACT(YEAR FROM transaction_date) = 2023: Filters the data to include only transactions from April and May 2023.
 5.	GROUP BY EXTRACT(MONTH FROM transaction_date): Groups the data by month.
 6.	ORDER BY EXTRACT(MONTH FROM transaction_date): Orders the results by month.
+
+# TOTAL ORDERS FOR EACH REPECTIVE MONTH
+
+SELECT
+
+EXTRACT (YEAR FROM transaction_date) AS year,
+
+EXTRACT (MONTH FROM transaction_date) AS month,
+
+COUNT(transaction_id) AS total_orders
+
+FROM coffee_shop_transactions
+
+GROUP BY
+
+EXTRACT (YEAR FROM transaction_date),
+
+EXTRACT (MONTH FROM transaction_date)
+
+ORDER BY year, month;
+
+![image](https://github.com/user-attachments/assets/c1a79aff-8902-4d8b-8410-b50e2bd9b55e)
