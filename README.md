@@ -1,3 +1,5 @@
+This analysis focuses on coffee shop sales. The fields I identified were based on the specific requirements needed for the analysis. First, I retrieved the data using SQL to ensure accuracy. Then, I visualized the data in Power BI, leveraging its DAX functions to maintain data integrity. By comparing the results between SQL and Power BI, I can ensure the outcomes are consistent, verifying that the data is accurate across both platforms.
+
 # TOTAL SALES FOR EACH REPECTIVE MONTH
 
 SELECT
